@@ -1,38 +1,36 @@
-<!-- resources/views/auth/register_doctor.blade.php -->
 
-@extends('layouts.app')
+<form method="POST" action="{{ route('doctor.register') }}">
+    @csrf
+    <label for="name">Nombre</label>
+    <input type="text" id="name" name="name" required>
 
-@section('content')
-    <div class="container">
-        <h2>Register as Doctor</h2>
-        <form method="POST" action="{{ url('doctor/register') }}">
-            @csrf
+    <label for="email">Correo electrónico</label>
+    <input type="email" id="email" name="email" required>
 
-            <!-- Name -->
-            <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" id="name" name="name" class="form-control" required autofocus>
-            </div>
+    <label for="specialty">Especialidad</label>
+    <input type="text" id="specialty" name="specialty" required>
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required>
-            </div>
+    <label for="phone">Teléfono</label>
+    <input type="text" id="phone" name="phone" required>
 
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required>
-            </div>
+    <label for="available_hours">Horas disponibles</label>
+    <input type="text" id="available_hours" name="available_hours" required>
 
-            <!-- Confirm Password -->
-            <div class="mb-3">
-                <label for="password_confirmation" class="form-label">Confirm Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
-            </div>
+    <label for="password">Contraseña</label>
+    <input type="password" id="password" name="password" required>
 
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-    </div>
-@endsection
+    <label for="password_confirmation">Confirmar Contraseña</label>
+    <input type="password" id="password_confirmation" name="password_confirmation" required>
+
+    <button type="submit">Registrar Doctor</button>
+
+    @if ($errors->any())
+        <div>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+</form>

@@ -24,19 +24,22 @@ class DoctorAuthController extends Controller
             'email' => 'required|string|email|max:255|unique:doctors',
             'password' => 'required|string|min:8|confirmed',
         ]);
-
+    
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
+    
         // Crear el doctor y cifrar la contraseña
-        Doctor::create([
+        $doctor = Doctor::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),  // Cifra la contraseña
+            'password' => $request->password,
             'role' => 'doctor',
         ]);
-
+    
+        
+        $doctor->assignRole('doctor');
+    
         return redirect()->route('login')->with('message', 'Doctor registrado exitosamente!');
     }
 
@@ -51,7 +54,7 @@ class DoctorAuthController extends Controller
         $doctor = Doctor::where('email', $request->email)->first();
 
         if (!$doctor || !Hash::check($request->password, $doctor->password)) {
-            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+            return back()->withErrors(['email' => 'Credenciales incorrectas'])->withInput();
         }
 
         $token = $doctor->createToken('doctor-token')->plainTextToken;
