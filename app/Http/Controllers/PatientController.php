@@ -15,6 +15,7 @@ class PatientController extends Controller
     }
 
     // Muestra el formulario para registrar un nuevo paciente
+
     public function create()
     {
         return view('patients.create');
@@ -23,17 +24,29 @@ class PatientController extends Controller
     // Guarda un nuevo paciente
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:patients,email',
-            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:patients,email',
+            'phone' => 'required|string|max:15',
             'birth_date' => 'required|date',
+            'password' => 'required|string|min:8',
         ]);
 
-        Patient::create($validated);
+        $patient = Patient::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'birth_date' => $request->birth_date,
+            'password' => $request->password,
+        ]);
 
-        return redirect()->route('patients.index')->with('success', 'Patient created successfully.');
+        // Asignar el rol
+        $patient->assignRole('patient');
+
+        return response()->json($patient, 201);
     }
+
+
 
     // Muestra los detalles de un paciente específico
     public function show(Patient $patient)
