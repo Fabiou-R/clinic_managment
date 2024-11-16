@@ -17,22 +17,36 @@ class DoctorController extends Controller
     // Muestra el formulario para registrar un nuevo doctor
     public function create()
     {
-        return view('doctors.create');
+        return view('doctors.create'); 
     }
 
     // Guarda un nuevo doctor
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'specialty' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:15',
             'available_hours' => 'required|string|max:255',
+            'email' => 'required|email|unique:doctors,email',
+            'password' => 'required|string|min:8',
         ]);
 
-        Doctor::create($validated);
 
-        return redirect()->route('doctors.index')->with('success', 'Doctor created successfully.');
+        $doctor = Doctor::create([
+            'name' => $request->name,
+            'specialty' => $request->specialty,
+            'phone' => $request->phone,
+            'available_hours' => $request->available_hours,
+            'email' => $request->email,
+            'password' => $request->password, 
+        ]);
+        dd($doctor); 
+
+        // Asignar el rol de 'doctor'
+        $doctor->assignRole('doctor');
+
+        return response()->json($doctor, 201);
     }
 
     // Muestra los detalles de un doctor específico
