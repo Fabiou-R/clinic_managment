@@ -22,32 +22,30 @@ class DoctorController extends Controller
 
     // Guarda un nuevo doctor
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'specialty' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'available_hours' => 'required|string|max:255',
-            'email' => 'required|email|unique:doctors,email',
-            'password' => 'required|string|min:8',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'specialty' => 'required|string|max:255',
+        'available_hours' => 'required|string|max:255',
+        'email' => 'required|email|unique:doctors,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
 
 
-        $doctor = Doctor::create([
-            'name' => $request->name,
-            'specialty' => $request->specialty,
-            'phone' => $request->phone,
-            'available_hours' => $request->available_hours,
-            'email' => $request->email,
-            'password' => $request->password, 
-        ]);
-        dd($doctor); 
+    $doctor = Doctor::create([
+        'name' => $request->name,
+        'specialty' => $request->specialty,
+        'available_hours' => $request->available_hours,
+        'email' => $request->email,
+        'password' => $request->password,
+    ]);
 
-        // Asignar el rol de 'doctor'
-        $doctor->assignRole('doctor');
+    // Asignar el rol de doctor
+    $doctor->assignRole('doctor');
 
-        return response()->json($doctor, 201);
-    }
+    return redirect()->route('doctors.index')->with('success', 'Doctor registrado correctamente.');
+}
+
 
     // Muestra los detalles de un doctor específico
     public function show(Doctor $doctor)
@@ -67,7 +65,6 @@ class DoctorController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'specialty' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
             'available_hours' => 'required|string|max:255',
         ]);
 
